@@ -343,18 +343,18 @@ class TestHelpers(TestCase):
             assert False, 'A general exception happened and should not have'
 
     def test_notify_ready_systemd(self):
+        novaagent.novaagent._ready = False
         try:
-            import systemd
-            del(systemd)
-            sd_notify = True
+            with mock.patch('systemd.daemon.notify') as mock_notify:
+                mock_notify.return_value = False
+                novaagent.novaagent.notify_ready()
+                self.assertTrue(mock_notify.called)
         except ImportError:
-            sd_notify = False
+            pass
 
+    def test_notify_ready_upstart(self):
         novaagent.novaagent._ready = False
         os.environ['UPSTART_JOB'] = 'novaagent_test'
-        with mock.patch('systemd.daemon.notify') as mock_notify:
-            mock_notify.return_value = False
-            with mock.patch('os.kill') as mock_kill:
-                novaagent.novaagent.notify_ready()
-                self.assertEqual(sd_notify, mock_notify.called)
-                self.assertTrue(mock_kill.called)
+        with mock.patch('os.kill') as mock_kill:
+            novaagent.novaagent.notify_ready()
+            self.assertTrue(mock_kill.called)

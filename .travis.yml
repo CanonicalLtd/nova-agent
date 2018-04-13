@@ -6,7 +6,6 @@ script:
   - nosetests -v --cover-erase --with-coverage --cover-package=novaagent
 
 python:
-  - "2.6"
   - "2.7"
   - "3.4"
   - "3.5"
@@ -24,17 +23,23 @@ install:
   - sudo apt update -qq
   - if [ $TYPE = pypi ]; then sudo apt install libsystemd-dev; fi
   - if [ $TYPE = pypi ]; then pip install -e .[systemd]; fi
-  - if [ $TYPE = distro ]; then sudo apt install python-systemd python3-systemd; fi
+  - if [ $TYPE = distro2 ]; then sudo apt install python-systemd; fi
+  - if [ $TYPE = distro3 ]; then sudo apt install python3-systemd; fi
 
 matrix:
   include:
+    # 2.6 can only be tested on trusty; without systemd
+    - python: "2.6"
+      env: TYPE=nosystemd RELEASE=14.04
+      distro: trusty
+    # Test with distro python-systemd
     - python: "2.7"
-      env: TYPE=distro RELEASE=14.04
+      env: TYPE=distro2 RELEASE=14.04
     - python: "3.4"
-      env: TYPE=distro RELEASE=14.04
+      env: TYPE=distro3 RELEASE=14.04
     - python: "2.7"
-      env: TYPE=distro RELEASE=16.04
+      env: TYPE=distro2 RELEASE=16.04
       distro: xenial
     - python: "3.5"
-      env: TYPE=distro RELEASE=16.04
+      env: TYPE=distro3 RELEASE=16.04
       distro: xenial

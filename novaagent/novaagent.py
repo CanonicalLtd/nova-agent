@@ -74,8 +74,6 @@ def notify_ready():
     try:
         from systemd.daemon import notify, Notification
         notify(Notification.READY)
-        _ready = True
-        return
     # Older v234 python-systemd
     except ImportError:
         try:

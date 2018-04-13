@@ -7,13 +7,12 @@ script:
 
 python:
   - "2.7"
-  - "3.4"
   - "3.5"
   - "3.6"
 
 env:
-  - TYPE=pypi
-  - TYPE=nosystemd
+  - RELEASE=16.04 TYPE=pypi
+  - RELEASE=16.04 TYPE=nosystemd
 
 dist: xenial
 
@@ -23,23 +22,27 @@ install:
   - sudo apt update -qq
   - if [ $TYPE = pypi ]; then sudo apt install libsystemd-dev; fi
   - if [ $TYPE = pypi ]; then pip install -e .[systemd]; fi
-  - if [ $TYPE = distro2 ]; then sudo apt install python-systemd; fi
-  - if [ $TYPE = distro3 ]; then sudo apt install python3-systemd; fi
+  - if [ $TYPE = dist2 ]; then sudo apt install python-systemd; fi
+  - if [ $TYPE = dist3 ]; then sudo apt install python3-systemd; fi
 
 matrix:
   include:
-    # 2.6 can only be tested on trusty; without systemd
+    # 2.6 & 3.4 can only be tested on trusty
     - python: "2.6"
-      env: TYPE=nosystemd RELEASE=14.04
-      distro: trusty
-    # Test with distro python-systemd
-    - python: "2.7"
-      env: TYPE=distro2 RELEASE=14.04
+      env:  RELEASE=14.04 TYPE=nosystemd
+      dist: trusty
     - python: "3.4"
-      env: TYPE=distro3 RELEASE=14.04
+      env:  RELEASE=14.04 TYPE=nosystemd
+      dist: trusty
+    # Test with dist python-systemd
+    ## trusty with v2.7
     - python: "2.7"
-      env: TYPE=distro2 RELEASE=16.04
-      distro: xenial
+      env:  RELEASE=14.04 TYPE=dist2
+      dist: trusty
+    ## xenial with v2.7 & v3.5
+    - python: "2.7"
+      env: RELEASE=16.04 TYPE=dist2
+      dist: xenial
     - python: "3.5"
-      env: TYPE=distro3 RELEASE=16.04
-      distro: xenial
+      env: RELEASE=16.04 TYPE=dist3
+      dist: xenial

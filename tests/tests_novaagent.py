@@ -345,6 +345,7 @@ class TestHelpers(TestCase):
     def test_notify_ready_systemd(self):
         try:
             import systemd
+            del(systemd)
             sd_notify = True
         except ImportError:
             sd_notify = False

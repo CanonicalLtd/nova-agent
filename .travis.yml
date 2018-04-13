@@ -14,12 +14,9 @@ python:
 
 env:
   - TYPE=pypi
-  - TYPE=distro
   - TYPE=nosystemd
 
-dist:
-  - xenial
-  - trusty
+dist: xenial
 
 install:
   - env
@@ -28,3 +25,16 @@ install:
   - if [ $TYPE = pypi ]; then sudo apt install libsystemd-dev; fi
   - if [ $TYPE = pypi ]; then pip install -e .[systemd]; fi
   - if [ $TYPE = distro ]; then sudo apt install python-systemd python3-systemd; fi
+
+matrix:
+  include:
+    - python: "2.7"
+      env: TYPE=distro RELEASE=14.04
+    - python: "3.4"
+      env: TYPE=distro RELEASE=14.04
+    - python: "2.7"
+      env: TYPE=distro RELEASE=16.04
+      distro: xenial
+    - python: "3.5"
+      env: TYPE=distro RELEASE=16.04
+      distro: xenial

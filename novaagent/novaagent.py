@@ -146,7 +146,7 @@ def create_parser():
         '--no-fork',
         dest='no_fork',
         default=False,
-        type=bool,
+        action='store_true',
         help='Perform os.fork when starting agent'
     )
     return parser
